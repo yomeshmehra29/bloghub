@@ -1,7 +1,7 @@
 // Post detail page - View single post with comments
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getPostById, getComments, addComment, incrementViews } from '../utils/storage';
+import { getPostById, getComments, addComment, deleteComment } from '../utils/storage';
 import CommentForm from '../components/CommentForm';
 import CommentList from '../components/CommentList';
 
@@ -15,30 +15,63 @@ function PostDetail() {
 
   // Load post and comments
   useEffect(() => {
-    const foundPost = getPostById(id);
-    if (foundPost) {
-      setPost(foundPost);
-      incrementViews(id);
-      const postComments = getComments(id);
-      setComments(postComments);
-    }
-    setLoading(false);
+    const loadPostAndComments = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch the specific post by ID
+        const foundPost = await getPostById(id);
+        
+        if (foundPost) {
+          setPost(foundPost);
+          
+          // Fetch all comments for this post
+          const postComments = await getComments(id);
+          setComments(postComments);
+        } else {
+          // Post not found
+          console.error('Post not found');
+        }
+      } catch (error) {
+        console.error('Error loading post:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadPostAndComments();
   }, [id]);
 
-  const handleCommentSubmit = (commentData) => {
-    setCommentLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      addComment(id, commentData);
-      const updatedComments = getComments(id);
+  const handleCommentSubmit = async (commentData) => {
+    try {
+      setCommentLoading(true);
+      
+      // Add comment to MongoDB
+      await addComment(id, commentData);
+      
+      // Refresh comments from database
+      const updatedComments = await getComments(id);
       setComments(updatedComments);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      alert('Failed to add comment. Please try again.');
+    } finally {
       setCommentLoading(false);
-    }, 500);
+    }
   };
 
-  const handleCommentDelete = (commentId) => {
-    const updatedComments = comments.filter(c => c.id !== commentId);
-    setComments(updatedComments);
+  const handleCommentDelete = async (commentId) => {
+    try {
+      // Delete comment from database
+      await deleteComment(commentId);
+      
+      // Refresh comments from database
+      const updatedComments = await getComments(id);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Failed to delete comment. Please try again.');
+    }
   };
 
   if (loading) {

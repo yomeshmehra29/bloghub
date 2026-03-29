@@ -1,0 +1,1 @@
+mongodb+srv://Yomesh%20Mehra:pagalhaikya@cluster0.mongodb.net/bloghub?retryWrites=true&w=majority

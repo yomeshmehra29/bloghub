@@ -22,11 +22,23 @@ function EditPost() {
 
   // Load post data
   useEffect(() => {
-    const post = getPostById(id);
-    if (post) {
-      setFormData(post);
-    }
-    setLoading(false);
+    const loadPost = async () => {
+      try {
+        setLoading(true);
+        const post = await getPostById(id);
+        if (post) {
+          setFormData(post);
+        } else {
+          console.error('Post not found');
+        }
+      } catch (error) {
+        console.error('Error loading post:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadPost();
   }, [id]);
 
   const validateForm = () => {
@@ -66,21 +78,37 @@ function EditPost() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    updatePost(id, formData);
-    navigate(`/post/${id}`);
+    try {
+      // Update post in MongoDB
+      await updatePost(id, formData);
+      
+      // Redirect to post detail page
+      navigate(`/post/${id}`);
+    } catch (error) {
+      console.error('Error updating post:', error);
+      alert('Failed to update post. Please try again.');
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
-      deletePost(id);
-      navigate('/');
+      try {
+        // Delete post from MongoDB
+        await deletePost(id);
+        
+        // Redirect to home page
+        navigate('/');
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        alert('Failed to delete post. Please try again.');
+      }
     }
   };
 

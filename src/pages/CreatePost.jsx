@@ -55,15 +55,23 @@ function CreatePost() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    addPost(formData);
-    navigate('/');
+    try {
+      // Add post to MongoDB
+      await addPost(formData);
+      
+      // Redirect to home page
+      navigate('/');
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('Failed to create post. Please try again.');
+    }
   };
 
   return (

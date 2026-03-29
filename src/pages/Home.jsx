@@ -9,22 +9,40 @@ function Home() {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Load posts from localStorage on component mount
+  // Load posts from API on component mount
   useEffect(() => {
-    initializeSampleData();
-    const loadedPosts = getPosts();
-    setPosts(loadedPosts);
-    setFilteredPosts(loadedPosts);
+    const loadPosts = async () => {
+      try {
+        // Initialize sample data if database is empty
+        await initializeSampleData();
+        
+        // Fetch all posts from MongoDB
+        const loadedPosts = await getPosts();
+        setPosts(loadedPosts);
+        setFilteredPosts(loadedPosts);
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        // If API fails, show empty state
+        setPosts([]);
+        setFilteredPosts([]);
+      }
+    };
+    
+    loadPosts();
   }, []);
 
   // Update filtered posts when search term changes
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredPosts(posts);
-    } else {
-      const results = searchPosts(searchTerm);
-      setFilteredPosts(results);
-    }
+    const handleFilteredSearch = async () => {
+      if (searchTerm.trim() === '') {
+        setFilteredPosts(posts);
+      } else {
+        const results = await searchPosts(searchTerm);
+        setFilteredPosts(results);
+      }
+    };
+    
+    handleFilteredSearch();
   }, [posts, searchTerm]);
 
   const handleSearch = (term) => {

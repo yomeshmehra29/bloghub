@@ -1,4 +1,4 @@
-# BlogHub Blog Platform - Complete Project Documentation
+x# BlogHub Blog Platform - Complete Project Documentation
 
 This comprehensive guide explains the entire BlogHub project structure, all files, and their purposes.
 
