@@ -293,6 +293,16 @@ export const deleteComment = async (commentId) => {
 
 // ===== UTILITY FUNCTIONS =====
 
+// Increment view counter for a post
+// Note: In the API version, view incrementing is automatic when fetching a post
+// This function is kept for backward compatibility with components
+export const incrementViews = async (id) => {
+  // Views are now incremented automatically by the backend
+  // when getPostById() is called (see api/routes/posts.js)
+  // This function is a no-op but kept to maintain component compatibility
+  return true;
+};
+
 // Initialize database with sample posts if empty
 // Automatically called on first page load
 // Only runs if database has no posts
