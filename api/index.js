@@ -120,12 +120,14 @@ app.use((error, req, res, next) => {
 // Get port from environment variable or use default 5000
 const PORT = process.env.PORT || 5000;
 
-// Start listening on specified port
-// This makes the server available for incoming HTTP requests
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📝 BlogHub API available at http://localhost:${PORT}`);
-});
+// Only start server if NOT running on Vercel (serverless environment)
+// On Vercel, the app is exported and called by serverless function handler
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📝 BlogHub API available at http://localhost:${PORT}`);
+  });
+}
 
-// Export app for testing purposes (if needed)
+// Export app for Vercel serverless functions and testing
 export default app;

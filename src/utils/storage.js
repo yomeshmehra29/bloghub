@@ -3,9 +3,9 @@
 // All functions use fetch() to make HTTP requests to the backend API
 
 // Determine API base URL based on environment
-// In production (Vercel): Uses the deployed domain
+// In production (Vercel): Uses relative path /api (same domain)
 // In development (localhost): Uses local API server
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 // ===== POSTS API FUNCTIONS =====
 
